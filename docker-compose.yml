@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-solar_huawei}
+      POSTGRES_USER: ${POSTGRES_USER:-solar_huawei}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://solar_huawei:change-me@postgres:5432/solar_huawei}
+      HUAWEI_API_BASE_URL: ${HUAWEI_API_BASE_URL:-}
+      HUAWEI_API_KEY: ${HUAWEI_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  collector:
+    build:
+      context: ./backend
+    command: ["python", "-m", "app.collector"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://solar_huawei:change-me@postgres:5432/solar_huawei}
+      HUAWEI_API_BASE_URL: ${HUAWEI_API_BASE_URL:-}
+      HUAWEI_API_KEY: ${HUAWEI_API_KEY:-}
+      HUAWEI_SITE_IDS: ${HUAWEI_SITE_IDS:-}
+      COLLECT_INTERVAL_SECONDS: ${COLLECT_INTERVAL_SECONDS:-300}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  postgres_data:
