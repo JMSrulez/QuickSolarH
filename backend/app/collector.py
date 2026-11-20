@@ -8,10 +8,10 @@ logger = logging.getLogger("solar-huawei-collector")
 
 
 def collect_once() -> None:
-    if not settings.huawei_api_base_url or not settings.huawei_api_key:
+    if not settings.huawei_api_base_url or not settings.huawei_api_username or not settings.huawei_system_code:
         logger.warning(
-            "Huawei API not configured; waiting for HUAWEI_API_BASE_URL and "
-            "HUAWEI_API_KEY."
+            "Huawei API not configured; waiting for HUAWEI_API_BASE_URL, "
+            "HUAWEI_API_USERNAME, and HUAWEI_SYSTEM_CODE."
         )
         return
     if not settings.site_ids:

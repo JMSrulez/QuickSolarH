@@ -6,7 +6,8 @@ class Settings(BaseSettings):
         "postgresql+psycopg://solar_huawei:change-me@postgres:5432/solar_huawei"
     )
     huawei_api_base_url: str = ""
-    huawei_api_key: str = ""
+    huawei_api_username: str = ""
+    huawei_system_code: str = ""
     huawei_site_ids: str = ""
     collect_interval_seconds: int = 300
 

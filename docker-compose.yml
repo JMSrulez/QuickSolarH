@@ -19,7 +19,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://solar_huawei:change-me@postgres:5432/solar_huawei}
       HUAWEI_API_BASE_URL: ${HUAWEI_API_BASE_URL:-}
-      HUAWEI_API_KEY: ${HUAWEI_API_KEY:-}
+      HUAWEI_API_USERNAME: ${HUAWEI_API_USERNAME:-}
+      HUAWEI_SYSTEM_CODE: ${HUAWEI_SYSTEM_CODE:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -33,7 +34,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://solar_huawei:change-me@postgres:5432/solar_huawei}
       HUAWEI_API_BASE_URL: ${HUAWEI_API_BASE_URL:-}
-      HUAWEI_API_KEY: ${HUAWEI_API_KEY:-}
+      HUAWEI_API_USERNAME: ${HUAWEI_API_USERNAME:-}
+      HUAWEI_SYSTEM_CODE: ${HUAWEI_SYSTEM_CODE:-}
       HUAWEI_SITE_IDS: ${HUAWEI_SITE_IDS:-}
       COLLECT_INTERVAL_SECONDS: ${COLLECT_INTERVAL_SECONDS:-300}
     depends_on:
