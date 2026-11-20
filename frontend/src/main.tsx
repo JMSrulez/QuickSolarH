@@ -12,6 +12,13 @@ type Site = {
 };
 
 type Dashboard = { sites: Site[]; updated_at: string };
+type CollectorStatus = {
+  state: string;
+  message: string;
+  last_attempt_at: string | null;
+  last_success_at: string | null;
+  error_message: string | null;
+};
 
 const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
@@ -22,15 +29,19 @@ function power(value: number | null): string {
 
 function App() {
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
+  const [collectorStatus, setCollectorStatus] = useState<CollectorStatus | null>(null);
 
   useEffect(() => {
     const load = async () => {
       const response = await fetch(`${apiUrl}/api/dashboard`);
       if (!response.ok) throw new Error("Impossible de charger le tableau de bord");
       setDashboard(await response.json() as Dashboard);
+      const statusResponse = await fetch(`${apiUrl}/api/status`);
+      if (!statusResponse.ok) throw new Error("Impossible de charger le statut du collecteur");
+      setCollectorStatus(await statusResponse.json() as CollectorStatus);
     };
     void load();
-    const timer = window.setInterval(() => void load(), 60_000);
+    const timer = window.setInterval(() => void load(), 10_000);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -55,6 +66,16 @@ function App() {
         <article><span>Production solaire</span><strong>{power(totalSolar)}</strong></article>
         <article><span>Consommation</span><strong>{power(totalConsumption)}</strong></article>
         <article><span>Sites connectés</span><strong>{sites.length} / 2</strong></article>
+      </section>
+      <section className="diagnostics">
+        <div className={`diagnostic-state ${collectorStatus?.state ?? "unknown"}`}>
+          <span>État du collecteur</span>
+          <strong>{collectorStatus?.message ?? "Connexion au worker…"}</strong>
+          {collectorStatus?.last_attempt_at && (
+            <small>Dernière vérification : {new Date(collectorStatus.last_attempt_at).toLocaleString()}</small>
+          )}
+          {collectorStatus?.error_message && <small className="error">{collectorStatus.error_message}</small>}
+        </div>
       </section>
       <section className="sites">
         {sites.length === 0 ? (

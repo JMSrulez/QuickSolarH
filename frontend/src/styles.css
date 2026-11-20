@@ -16,4 +16,10 @@ article { background: #182531; border: 1px solid #273847; border-radius: 14px; p
 .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px 12px; margin-top: 32px; }
 .metrics strong { display: block; margin-top: 8px; color: #fff; font-size: 20px; }
 .empty { grid-column: 1 / -1; color: #9eacba; text-align: center; padding: 64px 24px; border: 1px dashed #385064; border-radius: 14px; }
+.diagnostics { margin-bottom: 24px; }
+.diagnostic-state { background: #182531; border: 1px solid #385064; border-radius: 14px; padding: 18px 24px; }
+.diagnostic-state strong, .diagnostic-state small { display: block; margin-top: 8px; }
+.diagnostic-state strong { color: #fff; }
+.diagnostic-state small { color: #9eacba; }
+.diagnostic-state.error, .error { color: #ff9a9a; }
 @media (max-width: 700px) { main { padding: 28px 16px; } header, .site-heading { flex-direction: column; } .summary, .sites { grid-template-columns: 1fr; } }

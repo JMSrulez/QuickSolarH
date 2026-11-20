@@ -22,3 +22,17 @@ class SiteMeasurement(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class CollectorStatus(Base):
+    __tablename__ = "collector_status"
+
+    id: Mapped[int] = mapped_column(primary_key=True, default=1)
+    state: Mapped[str] = mapped_column(String(40))
+    message: Mapped[str] = mapped_column(String(500))
+    last_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_message: Mapped[str | None] = mapped_column(String(500))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )

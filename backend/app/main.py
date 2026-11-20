@@ -6,7 +6,7 @@ from sqlalchemy import desc, select, text
 from sqlalchemy.orm import Session
 
 from .db import Base, engine, get_session
-from .models import SiteMeasurement
+from .models import CollectorStatus, SiteMeasurement
 
 app = FastAPI(title="Solar Huawei Dashboard API", version="0.1.0")
 app.add_middleware(
@@ -25,6 +25,26 @@ def create_tables() -> None:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/api/status")
+def collector_status(session: Session = Depends(get_session)) -> dict:
+    status = session.get(CollectorStatus, 1)
+    if status is None:
+        return {
+            "state": "not_started",
+            "message": "Le worker n'a pas encore publié son état.",
+            "last_attempt_at": None,
+            "last_success_at": None,
+            "error_message": None,
+        }
+    return {
+        "state": status.state,
+        "message": status.message,
+        "last_attempt_at": status.last_attempt_at,
+        "last_success_at": status.last_success_at,
+        "error_message": status.error_message,
+    }
 
 
 @app.get("/api/dashboard")
